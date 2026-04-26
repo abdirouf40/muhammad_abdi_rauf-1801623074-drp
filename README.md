@@ -5,5 +5,5 @@ Nama: Muhammad Abdi Rauf
 NIM: 1801623074
 ===============
 Nama: Ayesha Putri Tyaslungit
-NIM: Ayesha Putri Tyaslungit
+NIM: 1801624172
 ===============
