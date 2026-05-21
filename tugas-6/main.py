@@ -1,7 +1,7 @@
 # =========================================================
 # Tugas 6: If-Statement (Aplikasi Manajemen Aktivitas)
 <<<<<<< HEAD
-# Nama: DAyesha Putri Tyaslungit
+# Nama: Ayesha Putri Tyaslungit
 # NIM: 1801624172
 =======
 # Nama: Difta Tiara Indah
