@@ -3,10 +3,6 @@
 <<<<<<< HEAD
 # Nama: Ayesha Putri Tyaslungit
 # NIM: 1801624172
-=======
-# Nama: Difta Tiara Indah
-# NIM: 1801624355
->>>>>>> 6e78e3659fc8e3d93b596cbf16d76abbb1010fd1
 # =========================================================
 
 from datetime import datetime
