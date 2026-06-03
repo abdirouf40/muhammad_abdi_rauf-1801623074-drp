@@ -1,3 +1,10 @@
+===============================
+Tugas Pertemuan 6
+Aplikasi Manajemen Aktivitas
+Muhammad Abdi Rauf 
+1801623074
+===============================
+
 from datetime import datetime
 
 
@@ -44,10 +51,6 @@ def aktivitas_berangkat_kerja():
         sisa_jam = sisa_menit // 60
         sisa_mnt = sisa_menit % 60
         print(f"   Anda BELUM terlambat masuk kerja.")
-        if sisa_jam > 0:
-            print(f"   Sisa waktu sebelum jam masuk: {sisa_jam} jam {sisa_mnt} menit.")
-        else:
-            print(f"   Sisa waktu sebelum jam masuk: {sisa_mnt} menit.")
         print(f"   Segera bersiap dan berangkat agar tidak terlambat!")
 
     elif jam_sekarang == JAM_MASUK_KERJA and menit_sekarang == 0:
@@ -55,19 +58,7 @@ def aktivitas_berangkat_kerja():
         print(f"   Segera berangkat agar tidak terlambat!")
 
     else:
-        if jam_sekarang == JAM_MASUK_KERJA:
-            terlambat_menit = menit_sekarang
-        else:
-            terlambat_menit = (jam_sekarang - JAM_MASUK_KERJA) * 60 + menit_sekarang
-
-        terlambat_jam = terlambat_menit // 60
-        terlambat_mnt = terlambat_menit % 60
-
         print(f"   Anda SUDAH TERLAMBAT masuk kerja!")
-        if terlambat_jam > 0:
-            print(f"   Keterlambatan: {terlambat_jam} jam {terlambat_mnt} menit.")
-        else:
-            print(f"   Keterlambatan: {terlambat_mnt} menit.")
         print(f"   Segera hubungi atasan atau pimpinan Anda.")
 
 def main():
