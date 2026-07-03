@@ -148,12 +148,3 @@ def import_data():
         print(f"❌ Import GAGAL: {e}")
     finally:
         conn.close()
-
-# ==========================================
-# CARA MENUNJUKKAN HASIL (Uji Coba)
-# ==========================================
-
-# Aktifkan salah satu dengan menghapus tanda pagar (#) untuk mengetes
-
-# export_data()   # Jalankan ini untuk Export data database ke JSON
-import_data()    # Jalankan ini untuk Import data JSON ke database
