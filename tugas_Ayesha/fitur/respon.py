@@ -1,7 +1,27 @@
 from datetime import datetime
-from penyimpanan import muat_data, simpan_data, id_baru
- 
- 
+
+# ==========================================
+# SIMULASI DUMMY FUNGSI PENYIMPANAN
+# (Ganti/sesuaikan dengan import aslimu)
+# ==========================================
+def muat_data():
+    # Simulasi struktur data ekspor dari aktivasi.py
+    return {
+        "pesan": [
+            {"id_pesan": 1, "id_pengguna": 101, "isi_pesan": "Halo, ini pesan pertama!", "tanggal_kirim": "2026-07-03 15:00:00", "status": "aktif"}
+        ],
+        "tanggapan": [
+            {"id_tanggapan": 1, "id_pesan": 1, "id_pengguna": 102, "isi_tanggapan": "Respon pertama nih.", "tanggal_tanggapan": "2026-07-03 15:05:00"}
+        ]
+    }
+
+def simpan_data(data):
+    print("-> [INFO] Data berhasil disimpan ke file JSON!")
+
+# ==========================================
+# FUNGSI UTAMA (CRUD SESUAI ERD)
+# ==========================================
+
 def tampilkan_menu():
     print("\n=== FORUM PESAN ANONIM (Respon) ===")
     print("1. Lihat semua pesan & respon")
@@ -9,137 +29,129 @@ def tampilkan_menu():
     print("3. Edit respon")
     print("4. Hapus respon")
     print("5. Keluar")
- 
- 
+
 def lihat_pesan(data):
-    """READ: menampilkan semua pesan beserta respon-respon di bawahnya."""
-    if not data:
+    """READ: Menampilkan pesan dan tanggapannya sesuai ERD"""
+    if not data.get("pesan"):
         print("Belum ada pesan di forum.")
         return
- 
+
     print("\n--- DAFTAR PESAN ---")
-    for pesan in data:
-        print(f"\n[id {pesan['id']}] ({pesan['waktu']})")
-        print(f"  {pesan['isi']}")
- 
-        if pesan["respon"]:
-            for r in pesan["respon"]:
-                print(f"    -> respon id {r['id']}: {r['isi']}")
-        else:
-            print("    (belum ada respon)")
- 
- 
-def cari_pesan(data, id_pesan):
-    """Fungsi bantu: mencari objek pesan berdasarkan id-nya."""
-    for pesan in data:
-        if pesan["id"] == id_pesan:
-            return pesan
-    return None
- 
- 
+    for pesan in data["pesan"]:
+        # Cetak detail pesan (menggunakan nama kolom di ERD)
+        print(f"\n[ID Pesan: {pesan['id_pesan']}] ({pesan['tanggal_kirim']})")
+        print(f"Isi: \"{pesan['isi_pesan']}\"")
+        print("Tanggapan:")
+
+        # Cari tanggapan yang punya 'id_pesan' yang sama (Simulasi Relasi ERD)
+        ada_tanggapan = False
+        for tg in data.get("tanggapan", []):
+            if tg["id_pesan"] == pesan["id_pesan"]:
+                print(f"  -> [ID Respon: {tg['id_tanggapan']}] {tg['isi_tanggapan']}")
+                ada_tanggapan = True
+        
+        if not ada_tanggapan:
+            print("  (belum ada tanggapan)")
+
 def buat_respon(data):
-    """CREATE: menambahkan respon baru ke sebuah pesan."""
+    """CREATE: Menambahkan tanggapan baru ke tabel TANGGAPAN"""
     lihat_pesan(data)
-    if not data:
-        return
- 
+    
     try:
-        id_pesan = int(input("\nMasukkan id pesan yang mau direspon: "))
+        id_pesan_target = int(input("\nMasukkan ID pesan yang mau direspon: "))
     except ValueError:
-        print("Id harus berupa angka.")
+        print("ID harus berupa angka.")
         return
- 
-    pesan = cari_pesan(data, id_pesan)
-    if pesan is None:
-        print("Id pesan tidak ditemukan.")
+
+    # Cek apakah ID pesan tersebut memang ada
+    pesan_ditemukan = False
+    for pesan in data["pesan"]:
+        if pesan["id_pesan"] == id_pesan_target:
+            pesan_ditemukan = True
+            break
+            
+    if not pesan_ditemukan:
+        print("ID pesan tidak ditemukan.")
         return
- 
+
     isi = input("Tulis respon anonim kamu: ").strip()
     if not isi:
         print("Respon tidak boleh kosong.")
         return
- 
+
+    # Membuat ID tanggapan baru secara otomatis (hitung jumlah + 1)
+    id_tanggapan_baru = len(data["tanggapan"]) + 1
+
+    # Struktur data baru, 100% mengikuti atribut tabel TANGGAPAN di ERD
     respon_baru = {
-        "id": id_baru(pesan["respon"]),
-        "isi": isi,
-        "waktu": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+        "id_tanggapan": id_tanggapan_baru,
+        "id_pesan": id_pesan_target,
+        "id_pengguna": 999,  # Contoh dummy ID Pengguna anonim
+        "isi_tanggapan": isi,
+        "tanggal_tanggapan": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     }
-    pesan["respon"].append(respon_baru)
+
+    # Dimasukkan ke list tanggapan utama (bukan di dalam pesannya)
+    data["tanggapan"].append(respon_baru)
     simpan_data(data)
-    print(f"Respon terkirim! (id respon: {respon_baru['id']})")
- 
- 
+    print(f"Respon terkirim! (ID Respon baru: {id_tanggapan_baru})")
+
 def edit_respon(data):
-    """UPDATE: mengubah isi respon berdasarkan id pesan + id respon."""
-    lihat_pesan(data)
-    if not data:
-        return
- 
+    """UPDATE: Mengubah isi tanggapan berdasarkan ID Tanggapan"""
     try:
-        id_pesan = int(input("\nMasukkan id pesan: "))
-        id_respon = int(input("Masukkan id respon yang mau diedit: "))
+        id_tg_target = int(input("\nMasukkan ID Respon yang mau diedit: "))
     except ValueError:
-        print("Id harus berupa angka.")
+        print("ID harus berupa angka.")
         return
- 
-    pesan = cari_pesan(data, id_pesan)
-    if pesan is None:
-        print("Id pesan tidak ditemukan.")
-        return
- 
-    for r in pesan["respon"]:
-        if r["id"] == id_respon:
-            isi_baru = input(f"Isi sekarang: {r['isi']}\nIsi baru: ").strip()
+
+    # Cari tanggapannya di dalam list tanggapan
+    for tg in data["tanggapan"]:
+        if tg["id_tanggapan"] == id_tg_target:
+            isi_baru = input(f"Isi sekarang: {tg['isi_tanggapan']}\nIsi baru: ").strip()
             if isi_baru:
-                r["isi"] = isi_baru
+                tg["isi_tanggapan"] = isi_baru
                 simpan_data(data)
                 print("Respon berhasil diperbarui.")
+                return
             else:
                 print("Isi baru tidak boleh kosong, dibatalkan.")
-            return
- 
-    print("Id respon tidak ditemukan.")
- 
- 
+                return
+
+    print("ID Respon tidak ditemukan.")
+
 def hapus_respon(data):
-    """DELETE: menghapus respon berdasarkan id pesan + id respon."""
-    lihat_pesan(data)
-    if not data:
-        return
- 
+    """DELETE: Menghapus tanggapan dari list berdasarkan ID Tanggapan"""
     try:
-        id_pesan = int(input("\nMasukkan id pesan: "))
-        id_respon = int(input("Masukkan id respon yang mau dihapus: "))
+        id_tg_target = int(input("\nMasukkan ID Respon yang mau dihapus: "))
     except ValueError:
-        print("Id harus berupa angka.")
+        print("ID harus berupa angka.")
         return
- 
-    pesan = cari_pesan(data, id_pesan)
-    if pesan is None:
-        print("Id pesan tidak ditemukan.")
-        return
- 
-    for r in pesan["respon"]:
-        if r["id"] == id_respon:
-            konfirmasi = input(f"Yakin hapus respon id {id_respon}? (y/n): ").lower()
-            if konfirmasi == "y":
-                pesan["respon"].remove(r)
+
+    # Cari dan hapus tanggapannya
+    for tg in data["tanggapan"]:
+        if tg["id_tanggapan"] == id_tg_target:
+            konfirmasi = input(f"Yakin hapus respon ID {id_tg_target}? (y/n): ").lower()
+            if konfirmasi == 'y':
+                data["tanggapan"].remove(tg)
                 simpan_data(data)
                 print("Respon berhasil dihapus.")
+                return
             else:
                 print("Dibatalkan.")
-            return
- 
-    print("Id respon tidak ditemukan.")
- 
- 
+                return
+
+    print("ID Respon tidak ditemukan.")
+
+# ==========================================
+# MENU UTAMA
+# ==========================================
 def main():
     data = muat_data()
- 
+
     while True:
         tampilkan_menu()
         pilihan = input("Pilih menu (1-5): ").strip()
- 
+
         if pilihan == "1":
             lihat_pesan(data)
         elif pilihan == "2":
@@ -153,7 +165,7 @@ def main():
             break
         else:
             print("Pilihan tidak valid, coba lagi.")
- 
- 
+
 if __name__ == "__main__":
     main()
+    
