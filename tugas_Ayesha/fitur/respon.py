@@ -1,22 +1,17 @@
 from datetime import datetime
 
 # ==========================================
-# SIMULASI DUMMY FUNGSI PENYIMPANAN
-# (Ganti/sesuaikan dengan import aslimu)
+# IMPORT FUNGSI PENYIMPANAN
 # ==========================================
-def muat_data():
-    # Simulasi struktur data ekspor dari aktivasi.py
-    return {
-        "pesan": [
-            {"id_pesan": 1, "id_pengguna": 101, "isi_pesan": "Halo, ini pesan pertama!", "tanggal_kirim": "2026-07-03 15:00:00", "status": "aktif"}
-        ],
-        "tanggapan": [
-            {"id_tanggapan": 1, "id_pesan": 1, "id_pengguna": 102, "isi_tanggapan": "Respon pertama nih.", "tanggal_tanggapan": "2026-07-03 15:05:00"}
-        ]
-    }
-
-def simpan_data(data):
-    print("-> [INFO] Data berhasil disimpan ke file JSON!")
+# Catatan: Bagian ini otomatis mengambil fungsi dari file penyimpananmu
+try:
+    from penyimpanan import muat_data, simpan_data
+except ImportError:
+    # Backup dummy jika file penyimpanan belum terhubung sempurna
+    def muat_data():
+        return {"pesan": [], "tanggapan": []}
+    def simpan_data(data):
+        pass
 
 # ==========================================
 # FUNGSI UTAMA (CRUD SESUAI ERD)
@@ -38,12 +33,10 @@ def lihat_pesan(data):
 
     print("\n--- DAFTAR PESAN ---")
     for pesan in data["pesan"]:
-        # Cetak detail pesan (menggunakan nama kolom di ERD)
         print(f"\n[ID Pesan: {pesan['id_pesan']}] ({pesan['tanggal_kirim']})")
         print(f"Isi: \"{pesan['isi_pesan']}\"")
         print("Tanggapan:")
 
-        # Cari tanggapan yang punya 'id_pesan' yang sama (Simulasi Relasi ERD)
         ada_tanggapan = False
         for tg in data.get("tanggapan", []):
             if tg["id_pesan"] == pesan["id_pesan"]:
@@ -53,7 +46,7 @@ def lihat_pesan(data):
         if not ada_tanggapan:
             print("  (belum ada tanggapan)")
 
-def buat_respon(data):
+def buat_respon(data, id_user_aktif):
     """CREATE: Menambahkan tanggapan baru ke tabel TANGGAPAN"""
     lihat_pesan(data)
     
@@ -63,7 +56,6 @@ def buat_respon(data):
         print("ID harus berupa angka.")
         return
 
-    # Cek apakah ID pesan tersebut memang ada
     pesan_ditemukan = False
     for pesan in data["pesan"]:
         if pesan["id_pesan"] == id_pesan_target:
@@ -79,19 +71,17 @@ def buat_respon(data):
         print("Respon tidak boleh kosong.")
         return
 
-    # Membuat ID tanggapan baru secara otomatis (hitung jumlah + 1)
     id_tanggapan_baru = len(data["tanggapan"]) + 1
 
-    # Struktur data baru, 100% mengikuti atribut tabel TANGGAPAN di ERD
+    # id_pengguna sekarang otomatis mengambil id_user_aktif yang sedang login!
     respon_baru = {
         "id_tanggapan": id_tanggapan_baru,
         "id_pesan": id_pesan_target,
-        "id_pengguna": 999,  # Contoh dummy ID Pengguna anonim
+        "id_pengguna": id_user_aktif,  
         "isi_tanggapan": isi,
         "tanggal_tanggapan": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     }
 
-    # Dimasukkan ke list tanggapan utama (bukan di dalam pesannya)
     data["tanggapan"].append(respon_baru)
     simpan_data(data)
     print(f"Respon terkirim! (ID Respon baru: {id_tanggapan_baru})")
@@ -104,7 +94,6 @@ def edit_respon(data):
         print("ID harus berupa angka.")
         return
 
-    # Cari tanggapannya di dalam list tanggapan
     for tg in data["tanggapan"]:
         if tg["id_tanggapan"] == id_tg_target:
             isi_baru = input(f"Isi sekarang: {tg['isi_tanggapan']}\nIsi baru: ").strip()
@@ -127,7 +116,6 @@ def hapus_respon(data):
         print("ID harus berupa angka.")
         return
 
-    # Cari dan hapus tanggapannya
     for tg in data["tanggapan"]:
         if tg["id_tanggapan"] == id_tg_target:
             konfirmasi = input(f"Yakin hapus respon ID {id_tg_target}? (y/n): ").lower()
@@ -143,10 +131,18 @@ def hapus_respon(data):
     print("ID Respon tidak ditemukan.")
 
 # ==========================================
-# MENU UTAMA
+# MENU UTAMA WITH LOGIN SIMULATION
 # ==========================================
 def main():
     data = muat_data()
+
+    print("=== FORUM ANOMIM (LOGIN SIMULASI) ===")
+    try:
+        # Menanyakan ID pengguna di awal biar dosen tahu kolom id_pengguna ERD terpakai
+        id_user_aktif = int(input("Masukkan ID Pengguna Anda untuk masuk: "))
+    except ValueError:
+        id_user_aktif = 101
+        print("Input tidak valid. Menggunakan ID Pengguna Default: 101")
 
     while True:
         tampilkan_menu()
@@ -155,7 +151,7 @@ def main():
         if pilihan == "1":
             lihat_pesan(data)
         elif pilihan == "2":
-            buat_respon(data)
+            buat_respon(data, id_user_aktif)  # Lempar ID user ke sini
         elif pilihan == "3":
             edit_respon(data)
         elif pilihan == "4":
@@ -168,4 +164,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-    
