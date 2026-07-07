@@ -1,166 +1,159 @@
-from datetime import datetime
+import sqlite3
 
-# ==========================================
-# IMPORT FUNGSI PENYIMPANAN
-# ==========================================
-# Catatan: Bagian ini otomatis mengambil fungsi dari file penyimpananmu
-try:
-    from penyimpanan import muat_data, simpan_data
-except ImportError:
-    # Backup dummy jika file penyimpanan belum terhubung sempurna
-    def muat_data():
-        return {"pesan": [], "tanggapan": []}
-    def simpan_data(data):
-        pass
+def lihat_pesan():
 
-# ==========================================
-# FUNGSI UTAMA (CRUD SESUAI ERD)
-# ==========================================
+    conn = sqlite3.connect("forum_anonim.db")
+    cursor = conn.cursor()
 
-def tampilkan_menu():
-    print("\n=== FORUM PESAN ANONIM (Respon) ===")
-    print("1. Lihat semua pesan & respon")
-    print("2. Beri respon ke sebuah pesan")
-    print("3. Edit respon")
-    print("4. Hapus respon")
-    print("5. Keluar")
+    cursor.execute("""
+    SELECT id_pesan, isi_pesan
+    FROM PESAN
+    WHERE status='Disetujui'
+    """)
 
-def lihat_pesan(data):
-    """READ: Menampilkan pesan dan tanggapannya sesuai ERD"""
-    if not data.get("pesan"):
-        print("Belum ada pesan di forum.")
-        return
+    data = cursor.fetchall()
 
-    print("\n--- DAFTAR PESAN ---")
-    for pesan in data["pesan"]:
-        print(f"\n[ID Pesan: {pesan['id_pesan']}] ({pesan['tanggal_kirim']})")
-        print(f"Isi: \"{pesan['isi_pesan']}\"")
-        print("Tanggapan:")
+    if len(data) == 0:
+        print("\nBelum ada pesan.")
+    else:
 
-        ada_tanggapan = False
-        for tg in data.get("tanggapan", []):
-            if tg["id_pesan"] == pesan["id_pesan"]:
-                print(f"  -> [ID Respon: {tg['id_tanggapan']}] {tg['isi_tanggapan']}")
-                ada_tanggapan = True
-        
-        if not ada_tanggapan:
-            print("  (belum ada tanggapan)")
+        print("\n===== DAFTAR PESAN =====")
 
-def buat_respon(data, id_user_aktif):
-    """CREATE: Menambahkan tanggapan baru ke tabel TANGGAPAN"""
-    lihat_pesan(data)
-    
-    try:
-        id_pesan_target = int(input("\nMasukkan ID pesan yang mau direspon: "))
-    except ValueError:
-        print("ID harus berupa angka.")
-        return
+        for pesan in data:
 
-    pesan_ditemukan = False
-    for pesan in data["pesan"]:
-        if pesan["id_pesan"] == id_pesan_target:
-            pesan_ditemukan = True
-            break
-            
-    if not pesan_ditemukan:
-        print("ID pesan tidak ditemukan.")
-        return
+            print("ID :", pesan[0])
+            print("Pesan :", pesan[1])
+            print("----------------------")
 
-    isi = input("Tulis respon anonim kamu: ").strip()
-    if not isi:
-        print("Respon tidak boleh kosong.")
-        return
+    conn.close()
 
-    id_tanggapan_baru = len(data["tanggapan"]) + 1
 
-    # id_pengguna sekarang otomatis mengambil id_user_aktif yang sedang login!
-    respon_baru = {
-        "id_tanggapan": id_tanggapan_baru,
-        "id_pesan": id_pesan_target,
-        "id_pengguna": id_user_aktif,  
-        "isi_tanggapan": isi,
-        "tanggal_tanggapan": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    }
+def tambah_tanggapan():
 
-    data["tanggapan"].append(respon_baru)
-    simpan_data(data)
-    print(f"Respon terkirim! (ID Respon baru: {id_tanggapan_baru})")
+    conn = sqlite3.connect("forum_anonim.db")
+    cursor = conn.cursor()
 
-def edit_respon(data):
-    """UPDATE: Mengubah isi tanggapan berdasarkan ID Tanggapan"""
-    try:
-        id_tg_target = int(input("\nMasukkan ID Respon yang mau diedit: "))
-    except ValueError:
-        print("ID harus berupa angka.")
-        return
+    id_pesan = input("Masukkan ID Pesan : ")
+    id_pengguna = input("Masukkan ID Pengguna : ")
+    isi = input("Masukkan Tanggapan : ")
+    tanggal = input("Tanggal : ")
 
-    for tg in data["tanggapan"]:
-        if tg["id_tanggapan"] == id_tg_target:
-            isi_baru = input(f"Isi sekarang: {tg['isi_tanggapan']}\nIsi baru: ").strip()
-            if isi_baru:
-                tg["isi_tanggapan"] = isi_baru
-                simpan_data(data)
-                print("Respon berhasil diperbarui.")
-                return
-            else:
-                print("Isi baru tidak boleh kosong, dibatalkan.")
-                return
+    cursor.execute("""
+    INSERT INTO TANGGAPAN
+    (id_pesan,id_pengguna,isi_tanggapan,tanggal_tanggapan)
+    VALUES (?,?,?,?)
+    """,(id_pesan,id_pengguna,isi,tanggal))
 
-    print("ID Respon tidak ditemukan.")
+    conn.commit()
 
-def hapus_respon(data):
-    """DELETE: Menghapus tanggapan dari list berdasarkan ID Tanggapan"""
-    try:
-        id_tg_target = int(input("\nMasukkan ID Respon yang mau dihapus: "))
-    except ValueError:
-        print("ID harus berupa angka.")
-        return
+    print("Tanggapan berhasil ditambahkan.")
 
-    for tg in data["tanggapan"]:
-        if tg["id_tanggapan"] == id_tg_target:
-            konfirmasi = input(f"Yakin hapus respon ID {id_tg_target}? (y/n): ").lower()
-            if konfirmasi == 'y':
-                data["tanggapan"].remove(tg)
-                simpan_data(data)
-                print("Respon berhasil dihapus.")
-                return
-            else:
-                print("Dibatalkan.")
-                return
+    conn.close()
 
-    print("ID Respon tidak ditemukan.")
 
-# ==========================================
-# MENU UTAMA WITH LOGIN SIMULATION
-# ==========================================
-def main():
-    data = muat_data()
+def lihat_tanggapan():
 
-    print("=== FORUM ANOMIM (LOGIN SIMULASI) ===")
-    try:
-        # Menanyakan ID pengguna di awal biar dosen tahu kolom id_pengguna ERD terpakai
-        id_user_aktif = int(input("Masukkan ID Pengguna Anda untuk masuk: "))
-    except ValueError:
-        id_user_aktif = 101
-        print("Input tidak valid. Menggunakan ID Pengguna Default: 101")
+    conn = sqlite3.connect("forum_anonim.db")
+    cursor = conn.cursor()
+
+    cursor.execute("""
+    SELECT *
+    FROM TANGGAPAN
+    """)
+
+    data = cursor.fetchall()
+
+    if len(data)==0:
+
+        print("\nBelum ada tanggapan.")
+
+    else:
+
+        print("\n===== TANGGAPAN =====")
+
+        for t in data:
+
+            print("ID :",t[0])
+            print("ID Pesan :",t[1])
+            print("ID Pengguna :",t[2])
+            print("Isi :",t[3])
+            print("Tanggal :",t[4])
+            print("------------------")
+
+    conn.close()
+
+
+def edit_tanggapan():
+
+    conn = sqlite3.connect("forum_anonim.db")
+    cursor = conn.cursor()
+
+    id = input("ID Tanggapan : ")
+    isi = input("Isi baru : ")
+
+    cursor.execute("""
+    UPDATE TANGGAPAN
+    SET isi_tanggapan=?
+    WHERE id_tanggapan=?
+    """,(isi,id))
+
+    conn.commit()
+
+    print("Tanggapan berhasil diubah.")
+
+    conn.close()
+
+
+def hapus_tanggapan():
+
+    conn = sqlite3.connect("forum_anonim.db")
+    cursor = conn.cursor()
+
+    id = input("ID Tanggapan : ")
+
+    cursor.execute("""
+    DELETE FROM TANGGAPAN
+    WHERE id_tanggapan=?
+    """,(id,))
+
+    conn.commit()
+
+    print("Tanggapan berhasil dihapus.")
+
+    conn.close()
+
+
+def menu_respon():
 
     while True:
-        tampilkan_menu()
-        pilihan = input("Pilih menu (1-5): ").strip()
 
-        if pilihan == "1":
-            lihat_pesan(data)
-        elif pilihan == "2":
-            buat_respon(data, id_user_aktif)  # Lempar ID user ke sini
-        elif pilihan == "3":
-            edit_respon(data)
-        elif pilihan == "4":
-            hapus_respon(data)
-        elif pilihan == "5":
-            print("Sampai jumpa!")
+        print("\n===== MENU TANGGAPAN =====")
+        print("1. Lihat Pesan")
+        print("2. Tambah Tanggapan")
+        print("3. Lihat Tanggapan")
+        print("4. Edit Tanggapan")
+        print("5. Hapus Tanggapan")
+        print("6. Kembali")
+
+        pilih = input("Pilih menu : ")
+
+        if pilih=="1":
+            lihat_pesan()
+
+        elif pilih=="2":
+            tambah_tanggapan()
+
+        elif pilih=="3":
+            lihat_tanggapan()
+
+        elif pilih=="4":
+            edit_tanggapan()
+
+        elif pilih=="5":
+            hapus_tanggapan()
+
+        elif pilih=="6":
             break
-        else:
-            print("Pilihan tidak valid, coba lagi.")
 
-if __name__ == "__main__":
-    main()
+        else:
+            print("Pilihan tidak tersedia.")
