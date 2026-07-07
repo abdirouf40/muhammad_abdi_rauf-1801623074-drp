@@ -5,7 +5,7 @@ import os
 
 def hit_database():
     
-    conn = sqlite3.connect('forum_anonim.db')
+    conn = sqlite3.connect('forum.db')
     cursor = conn.cursor()
     
 

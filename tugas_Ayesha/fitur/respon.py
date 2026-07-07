@@ -2,7 +2,7 @@ import sqlite3
 
 def lihat_pesan():
 
-    conn = sqlite3.connect("forum_anonim.db")
+    conn = sqlite3.connect("forum.db")
     cursor = conn.cursor()
 
     cursor.execute("""
@@ -30,7 +30,7 @@ def lihat_pesan():
 
 def tambah_tanggapan():
 
-    conn = sqlite3.connect("forum_anonim.db")
+    conn = sqlite3.connect("forum.db")
     cursor = conn.cursor()
 
     id_pesan = input("Masukkan ID Pesan : ")
@@ -53,7 +53,7 @@ def tambah_tanggapan():
 
 def lihat_tanggapan():
 
-    conn = sqlite3.connect("forum_anonim.db")
+    conn = sqlite3.connect("forum.db")
     cursor = conn.cursor()
 
     cursor.execute("""
@@ -85,7 +85,7 @@ def lihat_tanggapan():
 
 def edit_tanggapan():
 
-    conn = sqlite3.connect("forum_anonim.db")
+    conn = sqlite3.connect("forum.db")
     cursor = conn.cursor()
 
     id = input("ID Tanggapan : ")
@@ -106,7 +106,7 @@ def edit_tanggapan():
 
 def hapus_tanggapan():
 
-    conn = sqlite3.connect("forum_anonim.db")
+    conn = sqlite3.connect("forum.db")
     cursor = conn.cursor()
 
     id = input("ID Tanggapan : ")
