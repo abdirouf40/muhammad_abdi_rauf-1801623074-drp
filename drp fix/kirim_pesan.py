@@ -6,7 +6,6 @@ def kirim_pesan():
     cursor = conn.cursor()
 
     print("\n===== MENU KIRIM PESAN =====")
-    # Meminta input ID secara manual agar tidak bentrok di database bertipe TEXT
     id_pesan = input("Buat ID Pesan baru (contoh: P1, P2): ")
     isi = input("Masukkan isi pesan: ")
 

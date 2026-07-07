@@ -1,4 +1,5 @@
 import sqlite3
+from datetime import datetime
 
 def lihat_pesan():
     conn = sqlite3.connect("forum.db")
@@ -25,7 +26,9 @@ def tambah_tanggapan():
     id_pesan = input("Masukkan ID Pesan yang ingin ditanggapi: ")
     id_pengguna = input("Masukkan ID Pengguna Anda: ")
     isi = input("Masukkan isi tanggapan: ")
-    tanggal = input("Masukkan tanggal hari ini (YYYY-MM-DD): ")
+    
+    tanggal = datetime.now().strftime("%Y-%m-%d")
+    print(f"Tanggal hari ini (Otomatis): {tanggal}")
 
     try:
         cursor.execute("""

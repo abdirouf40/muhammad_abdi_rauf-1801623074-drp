@@ -81,13 +81,13 @@ def export_data():
         print("✅ Export BERHASIL! File 'data_export.json' telah dibuat.")
         
     except Exception as e:
-        print(f"❌ Export GAGAL: {e}")
+        print(f"Export GAGAL: {e}")
     finally:
         conn.close()
 
 def import_data():
     if not os.path.exists('data_export.json'):
-        print("❌ Gagal Import: File 'data_export.json' tidak ditemukan!")
+        print("Gagal Import: File 'data_export.json' tidak ditemukan!")
         return
 
     conn = hit_database()
@@ -126,10 +126,10 @@ def import_data():
             print("-> Data Tanggapan berhasil dimasukkan.")
             
         conn.commit()
-        print("✅ Import BERHASIL! Data tersinkronisasi.")
+        print("Import BERHASIL! Data tersinkronisasi.")
         
     except Exception as e:
         conn.rollback()
-        print(f"❌ Import GAGAL: {e}")
+        print(f"Import GAGAL: {e}")
     finally:
         conn.close()
