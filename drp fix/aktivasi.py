@@ -78,7 +78,7 @@ def export_data():
         with open('data_export.json', 'w', encoding='utf-8') as f:
             json.dump(data_gabungan, f, indent=4)
             
-        print("✅ Export BERHASIL! File 'data_export.json' telah dibuat.")
+        print(" Export BERHASIL! File 'data_export.json' telah dibuat.")
         
     except Exception as e:
         print(f"Export GAGAL: {e}")
