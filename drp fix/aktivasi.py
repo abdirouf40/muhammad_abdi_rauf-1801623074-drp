@@ -96,7 +96,7 @@ def import_data():
     try:
         print("Memulai import data...")
         
-        # Baca file JSON
+
         with open('data_export.json', 'r', encoding='utf-8') as f:
             data_import = json.load(f)
             
