@@ -10,10 +10,10 @@ while True:
     print("\n==========================")
     print("   FORUM PESAN ANONIM    ")
     print("==========================")
-    print("1. Kirim Pesan")
-    print("2. Moderasi Pesan")
-    print("3. Tanggapan")
-    print("4. Keluar") 
+    print("1. 📝 Kirim Pesan")
+    print("2. 👨‍💻 Moderasi Pesan")
+    print("3. 💭 Tanggapan")
+    print("4. 🚪 Keluar") 
 
     pilihan = input("Pilih menu : ")
 
