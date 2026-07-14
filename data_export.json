@@ -2,69 +2,12 @@
     "pengguna": [],
     "pesan": [
         {
-            "id_pesan": "P2",
-            "id_pengguna": "1",
-            "isi_pesan": "aku sedih bgt",
-            "tanggal_kirim": "2026-07-07 12:58:38.208837",
-            "status": "Disetujui"
-        },
-        {
             "id_pesan": "P1",
             "id_pengguna": "1",
-            "isi_pesan": "huhu",
-            "tanggal_kirim": "2026-07-07 13:03:21.740150",
-            "status": "Pending"
-        },
-        {
-            "id_pesan": "ayeshapt",
-            "id_pengguna": "1",
-            "isi_pesan": "aku lagi struggling banget...",
-            "tanggal_kirim": "2026-07-07 20:56:40.771507",
+            "isi_pesan": "Saya sedang stres kuliah!",
+            "tanggal_kirim": "2026-07-09 00:07:47.871622",
             "status": "Disetujui"
-        },
-        {
-            "id_pesan": "lalala",
-            "id_pengguna": "1",
-            "isi_pesan": "halo...",
-            "tanggal_kirim": "2026-07-07 21:23:27.861715",
-            "status": "disetujui"
         }
     ],
-    "tanggapan": [
-        {
-            "id_tanggapan": "sabar ya",
-            "id_pesan": "P2",
-            "id_pengguna": "T2",
-            "isi_tanggapan": "sabarr",
-            "tanggal_tanggapan": "2026-07-07"
-        },
-        {
-            "id_tanggapan": "maublsayeshapt",
-            "id_pesan": "ayeshapt",
-            "id_pengguna": "maublsayeshapt",
-            "isi_tanggapan": "semangat ya kamu",
-            "tanggal_tanggapan": "2026-07-07"
-        },
-        {
-            "id_tanggapan": "6",
-            "id_pesan": "ayeshapt",
-            "id_pengguna": "6",
-            "isi_tanggapan": "iyh semangat yh",
-            "tanggal_tanggapan": "2026-07-07"
-        },
-        {
-            "id_tanggapan": "emm",
-            "id_pesan": "lalala",
-            "id_pengguna": "emm",
-            "isi_tanggapan": "hai...",
-            "tanggal_tanggapan": "2026-07-07"
-        },
-        {
-            "id_tanggapan": "umm",
-            "id_pesan": "hai halo...",
-            "id_pengguna": "umm",
-            "isi_tanggapan": "hai halo...",
-            "tanggal_tanggapan": "2026-07-07"
-        }
-    ]
+    "tanggapan": []
 }
